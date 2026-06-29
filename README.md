@@ -75,8 +75,10 @@ Local Node:
 ```bash
 npm install
 npm run typecheck
+npm run build
 npm test
 npm run trace
+npm start
 npm run server
 ```
 

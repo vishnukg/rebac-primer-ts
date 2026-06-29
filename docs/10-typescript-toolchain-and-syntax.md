@@ -10,7 +10,6 @@ This project uses modern ESM TypeScript on Node.
 | `tsconfig.json`    | strict TypeScript settings |
 | `eslint.config.js` | lint rules                 |
 | `vitest.config.ts` | test configuration         |
-| `tsdown.config.ts` | server build               |
 
 ## Scripts
 
@@ -19,12 +18,18 @@ npm run typecheck
 npm run lint
 npm test
 npm run build
+npm start
 npm run check
 npm run server
 ```
 
-`tsc` typechecks only. Runtime execution during development uses `tsx`. The
-production bundle is built with `tsdown`.
+`tsc` is the compiler for both typechecking and server builds. `npm run build`
+emits JavaScript into `dist/`, and `npm start` plus `npm run server` always
+build first, then run `node dist/server/index.js`.
+
+There is no `tsx` development runner and no `esbuild` server build step in this
+repo. The runtime path is the same locally and in Docker: compile TypeScript,
+then run compiled JavaScript with Node.
 
 ## ESM Imports
 

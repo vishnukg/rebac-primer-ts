@@ -1,4 +1,4 @@
-FROM node:24.16.0-alpine AS dev
+FROM node:24.18.0-alpine AS dev
 WORKDIR /workspace
 ENV npm_config_update_notifier=false
 
@@ -10,7 +10,7 @@ FROM deps AS build
 COPY . .
 RUN npm run build
 
-FROM node:24.16.0-alpine AS runtime
+FROM node:24.18.0-alpine AS runtime
 WORKDIR /app
 ENV NODE_ENV=production
 RUN addgroup -S app && adduser -S -G app app

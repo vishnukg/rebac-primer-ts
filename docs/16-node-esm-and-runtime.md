@@ -2,6 +2,9 @@
 
 The server is a Node ESM program.
 
+The repo targets Node `24.18.0`, the latest LTS line used by the local, Docker,
+and CI workflows.
+
 ## Entry Point
 
 ```text
@@ -43,4 +46,6 @@ npm run build
 node dist/server/index.js
 ```
 
-The Docker runtime image runs the built server.
+`npm start` and `npm run server` perform those steps for local development. The
+Docker runtime image also runs the built server, so the app always starts from
+compiled JavaScript rather than from `.ts` files.
