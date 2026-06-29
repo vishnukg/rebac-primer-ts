@@ -9,22 +9,27 @@ Authorization: Bearer demo-token-alice
 
 ## Startup
 
-`src/server/index.ts` calls `composeServerApp`.
+`src/server/index.ts` owns concrete runtime decisions:
 
-`src/server/compose.ts` wires:
-
-```text
-token verifier
-document repository
-authorization backend
-documents service
-HTTP handler
-```
+- reads `PORT` and `AUTHZ_BACKEND`
+- builds graph or OpenFGA authorization
+- builds the in-memory document repository
+- builds the demo token verifier
+- calls `composeServerApp`
+- runs the startup demo-document seed
+- starts the Node HTTP server
 
 The default backend is:
 
 ```text
 makeAuthorizationService -> makeGraphEvaluator -> makeInMemoryTupleRepository
+```
+
+`src/server/compose.ts` wires the supplied dependencies:
+
+```text
+document repository + authorization -> makeDocuments
+documents + token verifier          -> makeHttpHandler
 ```
 
 ## Request

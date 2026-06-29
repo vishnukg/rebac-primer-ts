@@ -34,7 +34,7 @@ authorization, run the implementation, and know where OpenFGA fits.
 | --- | -------------------------------- | ------------------------------------------------------------ |
 | 06  | Architecture: ports and adapters | `src/app/core/ports`, `src/app/adapters`                     |
 | 17  | TypeScript ReBAC implementation  | `src/app/core/domain/authz`, `src/app/core/domain/documents` |
-| 18  | Factory-function pattern         | `make*` factories and `composeServerApp`                     |
+| 18  | Strict factory-function pattern  | `make*` leaves, `compose*` wiring, and `src/server/index.ts` |
 | 22  | Promise concurrency              | `examples/concurrency`                                       |
 | 23  | Generics and result types        | `examples/generics`                                          |
 | 24  | Ports and composition            | `src/app/core/ports`, `src/server/compose.ts`                |

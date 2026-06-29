@@ -13,8 +13,9 @@ examples          focused TypeScript lessons
 
 Core code may import core code. It must not import adapters.
 
-Adapters implement core ports. The server composition root chooses concrete
-adapters and wires them together.
+Adapters implement core ports. `src/server/index.ts` chooses concrete adapters
+and reads environment variables. `src/server/compose.ts` wires already-built
+capabilities together.
 
 ## Runtime Shape
 
@@ -51,13 +52,30 @@ const evaluator = makeGraphEvaluator({ store });
 The caller receives plain functions and objects. Dependencies are captured in
 closures and are not accessed through `this`.
 
-## Composition Root
+## Trunk And Composition Root
 
-`src/server/compose.ts` selects:
+The stricter ModulePattern split is:
+
+```text
+src/server/index.ts    trunk: env vars, concrete adapter selection, process start
+src/server/compose.ts  branch: make domain + driving adapter from supplied ports
+make* files            leaves: define one reusable capability inline
+```
+
+`src/server/index.ts` selects:
 
 - graph or OpenFGA authorization backend
 - in-memory document repository
 - demo token verifier
+- demo seed data
+
+`src/server/compose.ts` wires:
+
+- `makeDocuments`
 - HTTP handler
 
-Domain code does not read environment variables.
+`composeServerApp` returns only what the entry point drives: the HTTP handler
+and the startup seeding operation. Domain code does not read environment
+variables or import concrete adapters. For the detailed naming contract and
+audit rules, see
+[18-factory-function-pattern.md](./18-factory-function-pattern.md).

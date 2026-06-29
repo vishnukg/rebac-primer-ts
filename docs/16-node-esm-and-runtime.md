@@ -8,8 +8,8 @@ The server is a Node ESM program.
 src/server/index.ts
 ```
 
-It composes the app, creates an HTTP server, listens on `PORT`, and handles
-shutdown signals.
+It reads environment variables, chooses concrete adapters, composes the app,
+creates an HTTP server, listens on `PORT`, and handles shutdown signals.
 
 ## Composition
 
@@ -17,12 +17,14 @@ shutdown signals.
 src/server/compose.ts
 ```
 
-This file selects:
+This file wires supplied dependencies into the app surface. It does not read
+environment variables or choose graph versus OpenFGA. It builds:
 
-- in-process graph backend or OpenFGA backend
-- in-memory document repository
-- demo token verifier
+- documents service
 - HTTP handler
+- startup demo-document seeding operation
+
+The concrete backend choice lives in `src/server/index.ts`.
 
 ## Environment
 

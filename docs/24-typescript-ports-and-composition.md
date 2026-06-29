@@ -33,8 +33,22 @@ adapter behavior.
 
 ## Composition
 
-`src/server/compose.ts` is allowed to know about concrete adapters. Domain files
-are not.
+`src/server/index.ts` chooses concrete adapters and reads environment variables.
+`src/server/compose.ts` receives those already-built dependencies, calls the
+needed `make*` factories, and returns only what the entry point drives.
+
+That keeps the dependency tree explicit:
+
+```text
+index.ts    concrete reality: env, OpenFGA vs graph, process start
+compose.ts  wiring: documents + HTTP handler
+make*.ts    leaves: actual reusable capabilities
+```
+
+Use the strict naming rule from
+[18-factory-function-pattern.md](./18-factory-function-pattern.md): `make*`
+defines one capability inline, while `compose*` calls factories and wires them.
+The entry point is the trunk, not a reusable factory.
 
 ## Drill
 

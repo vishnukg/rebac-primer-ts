@@ -23,14 +23,32 @@ Factories are used for services, repositories, adapters, and evaluators.
 
 ## Composition
 
-A `compose*` function wires multiple factories:
+A `compose*` function wires already-built dependencies through multiple
+factories:
 
 ```ts
-const app = await composeServerApp(process.env);
+const app = composeServerApp({
+    authz,
+    documentRepository,
+    authenticator,
+    seedDocument,
+});
 ```
 
-Composition roots may read environment variables and choose concrete adapters.
-Core domain code should not.
+In this repo, `src/server/index.ts` is the trunk: it reads environment
+variables, chooses concrete adapters, and starts the process.
+`src/server/compose.ts` is the branch: it calls `make*` factories and returns
+the capabilities the entry point drives. Core domain code should not read
+environment variables or import concrete adapters.
+
+## Leaf, Branch, Trunk
+
+| Shape      | Prefix      | Job                                               |
+| ---------- | ----------- | ------------------------------------------------- |
+| leaf       | `make*`     | define one capability inline                      |
+| branch     | `compose*`  | wire factories and supplied dependencies together |
+| trunk      | entry point | choose concrete infrastructure and start runtime  |
+| plain tool | no prefix   | transform or validate data                        |
 
 ## Why Not Classes Here
 
@@ -47,4 +65,6 @@ Open `scripts/audit-factories.mjs`, then run:
 npm run audit
 ```
 
-The audit enforces the naming split between `make*` and `compose*`.
+The audit enforces the naming split between `make*` and `compose*`. The full
+strict convention, including examples of invalid names, is in
+[18-factory-function-pattern.md](./18-factory-function-pattern.md).

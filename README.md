@@ -57,6 +57,12 @@ map. Finish the TypeScript path with the
 [guided feature lab](docs/29-typescript-guided-feature-lab.md), which adds an
 operation through the domain, HTTP, authorization, and testing layers.
 
+For the repo's strict module convention, read
+[Factory-function pattern](docs/18-factory-function-pattern.md). The short rule:
+`make*` files are leaves that define one reusable capability inline, `compose*`
+functions wire factories together, and `src/server/index.ts` owns runtime
+adapter selection and process startup.
+
 If your main goal is learning TypeScript, do not skip the example packages under
 `examples/`. They are executable language lessons wired to the same domain:
 promise concurrency, generics, middleware-style function composition, and HTTP

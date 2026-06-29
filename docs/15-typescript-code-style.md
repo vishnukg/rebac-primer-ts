@@ -22,8 +22,15 @@ Core must not import adapters.
 
 - `make*` creates a reusable capability without calling other factories.
 - `compose*` wires factories together.
+- `src/server/index.ts` chooses concrete runtime adapters and starts the
+  process. Do not hide that behind a `make*` name.
 - `render*` is not used in this server repo, but would be a one-time UI
   transform if a UI were added.
+
+The strict test is: if the function body calls another `make*` or `compose*`
+factory, it is composition and should use `compose*`; otherwise a reusable
+capability factory should use `make*`. See
+[18-factory-function-pattern.md](./18-factory-function-pattern.md).
 
 ## Types
 
@@ -45,6 +52,7 @@ Avoid:
 
 ```bash
 npm run format:check
+npm run audit
 npm run typecheck
 npm run lint
 npm test
