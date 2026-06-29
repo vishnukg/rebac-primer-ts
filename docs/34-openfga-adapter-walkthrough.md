@@ -35,7 +35,7 @@ The adapter maps the app check:
 
 ```ts
 {
-  (user, relation, object);
+    (user, relation, object);
 }
 ```
 
@@ -43,12 +43,12 @@ to OpenFGA's `/check` body:
 
 ```json
 {
-  "authorization_model_id": "...",
-  "tuple_key": {
-    "user": "user:alice",
-    "relation": "can_edit",
-    "object": "document:roadmapDocument"
-  }
+    "authorization_model_id": "...",
+    "tuple_key": {
+        "user": "user:alice",
+        "relation": "can_edit",
+        "object": "document:roadmapDocument"
+    }
 }
 ```
 

@@ -1,43 +1,43 @@
 services:
-  tools:
-    build:
-      context: ..
-      dockerfile: Dockerfile
-      target: dev
-    working_dir: /workspace
-    volumes:
-      - ..:/workspace
-      - npm_cache:/root/.npm
-    profiles:
-      - tools
+    tools:
+        build:
+            context: ..
+            dockerfile: Dockerfile
+            target: dev
+        working_dir: /workspace
+        volumes:
+            - ..:/workspace
+            - npm_cache:/root/.npm
+        profiles:
+            - tools
 
-  app:
-    build:
-      context: ..
-      dockerfile: Dockerfile
-    environment:
-      PORT: "4001"
-      # Authorization backend. Default "graph" (in-process). The server-openfga
-      # make target sets AUTHZ_BACKEND=openfga and the OPENFGA_* vars below.
-      AUTHZ_BACKEND: "${AUTHZ_BACKEND:-graph}"
-      OPENFGA_API_URL: "${OPENFGA_API_URL:-http://openfga:8080}"
-      OPENFGA_STORE_ID: "${OPENFGA_STORE_ID:-}"
-      OPENFGA_MODEL_ID: "${OPENFGA_MODEL_ID:-}"
-    ports:
-      - "4001:4001"
-    profiles:
-      - app
+    app:
+        build:
+            context: ..
+            dockerfile: Dockerfile
+        environment:
+            PORT: "4001"
+            # Authorization backend. Default "graph" (in-process). The server-openfga
+            # make target sets AUTHZ_BACKEND=openfga and the OPENFGA_* vars below.
+            AUTHZ_BACKEND: "${AUTHZ_BACKEND:-graph}"
+            OPENFGA_API_URL: "${OPENFGA_API_URL:-http://openfga:8080}"
+            OPENFGA_STORE_ID: "${OPENFGA_STORE_ID:-}"
+            OPENFGA_MODEL_ID: "${OPENFGA_MODEL_ID:-}"
+        ports:
+            - "4001:4001"
+        profiles:
+            - app
 
-  openfga:
-    image: openfga/openfga:v1.18.0
-    command: run
-    environment:
-      OPENFGA_DATASTORE_ENGINE: memory
-      OPENFGA_LOG_FORMAT: json
-    ports:
-      - "8080:8080"
-      - "8081:8081"
-      - "3000:3000"
+    openfga:
+        image: openfga/openfga:v1.18.0
+        command: run
+        environment:
+            OPENFGA_DATASTORE_ENGINE: memory
+            OPENFGA_LOG_FORMAT: json
+        ports:
+            - "8080:8080"
+            - "8081:8081"
+            - "3000:3000"
 
 volumes:
-  npm_cache:
+    npm_cache:

@@ -10,10 +10,10 @@ src/app/core/ports
 
 ```ts
 type Evaluator = {
-  evaluate: (
-    ctx: OperationContext,
-    request: CheckRequest,
-  ) => Promise<CheckResult>;
+    evaluate: (
+        ctx: OperationContext,
+        request: CheckRequest,
+    ) => Promise<CheckResult>;
 };
 ```
 

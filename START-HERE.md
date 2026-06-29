@@ -32,7 +32,7 @@ The TypeScript `TupleKey` type stores the same values in object-first shape:
 
 ```ts
 {
-  (object, relation, user);
+    (object, relation, user);
 }
 ```
 

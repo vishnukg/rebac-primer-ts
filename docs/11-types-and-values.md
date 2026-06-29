@@ -20,7 +20,7 @@ Relations are runtime values with precise literal types:
 
 ```ts
 export const relation = {
-  documentCanEdit: "can_edit",
+    documentCanEdit: "can_edit",
 } as const;
 ```
 
@@ -42,7 +42,7 @@ Domain errors are ordinary `Error` objects with a stable `kind`:
 
 ```ts
 {
-  kind: "document_not_found";
+    kind: "document_not_found";
 }
 ```
 

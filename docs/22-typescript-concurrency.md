@@ -27,7 +27,7 @@ Runtime ports accept:
 
 ```ts
 type OperationContext = {
-  signal?: AbortSignal;
+    signal?: AbortSignal;
 };
 ```
 

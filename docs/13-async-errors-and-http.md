@@ -16,7 +16,7 @@ The repo uses a small context object:
 
 ```ts
 type OperationContext = {
-  signal?: AbortSignal;
+    signal?: AbortSignal;
 };
 ```
 

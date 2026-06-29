@@ -34,8 +34,8 @@ The document service consumes only the authorization methods it needs:
 
 ```ts
 type DocumentsServiceCfg = {
-  repository: DocumentRepository;
-  authz: Pick<AuthorizationService, "check" | "writeTuples" | "deleteTuples">;
+    repository: DocumentRepository;
+    authz: Pick<AuthorizationService, "check" | "writeTuples" | "deleteTuples">;
 };
 ```
 

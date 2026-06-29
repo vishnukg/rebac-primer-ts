@@ -6,11 +6,11 @@ Recommended style for this repo: functional TypeScript with factories.
 
 ```ts
 const makeThing = (deps) => {
-  const operation = async (input) => {
-    // uses deps through closure
-  };
+    const operation = async (input) => {
+        // uses deps through closure
+    };
 
-  return { operation };
+    return { operation };
 };
 ```
 
@@ -20,9 +20,9 @@ Factories run at startup, capture dependencies, and return plain capabilities.
 
 ```ts
 const composeServerApp = async (env) => {
-  const authz = composeGraphAuthz();
-  const documents = makeDocuments({ repository, authz });
-  return { handler, port, backend };
+    const authz = composeGraphAuthz();
+    const documents = makeDocuments({ repository, authz });
+    return { handler, port, backend };
 };
 ```
 

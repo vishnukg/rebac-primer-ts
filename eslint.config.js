@@ -4,11 +4,13 @@ import tseslint from "typescript-eslint";
 import prettier from "eslint-config-prettier";
 
 export default defineConfig(
-  js.configs.recommended,
-  tseslint.configs.recommended,
-  prettier,
-  {
-    files: ["**/*.mjs"],
-    languageOptions: { globals: { process: "readonly", console: "readonly" } },
-  },
+    js.configs.recommended,
+    tseslint.configs.recommended,
+    prettier,
+    {
+        files: ["**/*.mjs"],
+        languageOptions: {
+            globals: { process: "readonly", console: "readonly" },
+        },
+    },
 );
