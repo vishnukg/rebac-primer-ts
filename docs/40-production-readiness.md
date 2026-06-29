@@ -50,5 +50,5 @@ npm run build
 make openfga/model-test
 ```
 
-Add deployment-specific integration and load tests before using this architecture
-for real traffic.
+Add deployment-specific integration and load tests before using this
+architecture for real traffic.

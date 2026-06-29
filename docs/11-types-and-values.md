@@ -52,5 +52,5 @@ The HTTP adapter maps those tags to status codes.
 
 Open `src/app/adapters/documents/makeInMemoryDocumentRepository.ts`.
 
-Temporarily return the stored document directly instead of a copy. Write down why
-that would let callers mutate repository state without calling `save`.
+Temporarily return the stored document directly instead of a copy. Write down
+why that would let callers mutate repository state without calling `save`.

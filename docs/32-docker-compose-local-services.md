@@ -26,7 +26,8 @@ make shell
 
 ## OpenFGA State
 
-The local OpenFGA service uses an in-memory datastore. If you restart it, reseed:
+The local OpenFGA service uses an in-memory datastore. If you restart it,
+reseed:
 
 ```bash
 make openfga/seed

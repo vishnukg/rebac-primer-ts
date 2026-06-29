@@ -116,7 +116,7 @@ Casey has no path through the graph, so access is denied.
 | Roadmap Document  | `document:roadmapDocument`   | protected document              |
 
 The in-process graph evaluator is the learning implementation. The OpenFGA
-adapter demonstrates the external authorization-service direction. Both
-backends satisfy the same narrow authorization port, while OpenFGA stores and
-evaluates the relationships remotely. The rest of the demo still requires the
-production work listed in doc 40.
+adapter demonstrates the external authorization-service direction. Both backends
+satisfy the same narrow authorization port, while OpenFGA stores and evaluates
+the relationships remotely. The rest of the demo still requires the production
+work listed in doc 40.

@@ -31,8 +31,8 @@ resolution limits
 production engine behavior
 ```
 
-Your application still owns product policy, relationship sources of truth,
-model rollout, enforcement points, and operational choices.
+Your application still owns product policy, relationship sources of truth, model
+rollout, enforcement points, and operational choices.
 
 ## Mapping
 
@@ -55,8 +55,8 @@ make openfga/seed
 make server-openfga
 ```
 
-`openfga/seed` creates a store, writes the model, seeds policy tuples, and writes
-IDs to `deployments/openfga/.ids.env`.
+`openfga/seed` creates a store, writes the model, seeds policy tuples, and
+writes IDs to `deployments/openfga/.ids.env`.
 
 The Node server creates the demo document at startup and writes its document
 tuples through the selected authorization backend.

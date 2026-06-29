@@ -56,8 +56,8 @@ For `editor from workspace`, OpenFGA starts at the document, follows its
 Check(user:alice, can_edit, document:roadmapDocument)
 ```
 
-The evaluator asks whether Alice belongs to
-`document:roadmapDocument#can_edit`. It resolves:
+The evaluator asks whether Alice belongs to `document:roadmapDocument#can_edit`.
+It resolves:
 
 ```text
 can_edit -> editor

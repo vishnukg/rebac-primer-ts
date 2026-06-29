@@ -58,5 +58,5 @@ evaluator.
 
 ## OpenFGA Mode
 
-With `AUTHZ_BACKEND=openfga`, the document service calls the same
-authorization port, but checks and tuple writes go to OpenFGA.
+With `AUTHZ_BACKEND=openfga`, the document service calls the same authorization
+port, but checks and tuple writes go to OpenFGA.

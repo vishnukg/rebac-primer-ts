@@ -54,8 +54,8 @@ to OpenFGA's `/check` body:
 
 ## Writes
 
-When a document is created, `makeDocuments` writes document-level tuples.
-In OpenFGA mode, `writeTuples` sends them to `/write`.
+When a document is created, `makeDocuments` writes document-level tuples. In
+OpenFGA mode, `writeTuples` sends them to `/write`.
 
 ## Reads
 

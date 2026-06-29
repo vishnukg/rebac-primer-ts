@@ -100,7 +100,8 @@ Then read the fast ReBAC route and continue with:
 
 ### Production Route: Understand The Boundaries
 
-Read [Designing a ReBAC authorization service](docs/07-rebac-authorization-service-design.md),
+Read
+[Designing a ReBAC authorization service](docs/07-rebac-authorization-service-design.md),
 then [OAuth and OIDC](docs/01-oauth-authentication.md),
 [migration](docs/26-openfga-migration.md),
 [the OpenFGA adapter](docs/34-openfga-adapter-walkthrough.md), and
@@ -125,8 +126,8 @@ npm run trace
 npm run test:permission
 ```
 
-`npm run trace` prints every step the evaluator took. For
-`alice / can_edit`, the successful path is:
+`npm run trace` prints every step the evaluator took. For `alice / can_edit`,
+the successful path is:
 
 ```text
 user:alice -> team membership -> workspace editor -> document
