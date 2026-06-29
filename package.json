@@ -1,0 +1,54 @@
+{
+  "name": "rebac-primer-ts",
+  "version": "0.1.0",
+  "description": "A TypeScript relationship-based access control primer with an in-process graph evaluator and optional OpenFGA adapter.",
+  "type": "module",
+  "bin": {
+    "rebac-primer-ts": "./dist/server/index.js"
+  },
+  "engines": {
+    "node": ">=24.16.0 <25"
+  },
+  "scripts": {
+    "server": "tsx src/server/index.ts",
+    "server:openfga": "AUTHZ_BACKEND=openfga tsx src/server/index.ts",
+    "trace": "vitest run src/app/core/domain/authz/makeGraphEvaluator.trace.test.ts",
+    "test:permission": "vitest run -t \"team member can edit document\"",
+    "typecheck": "tsc --noEmit",
+    "build": "tsdown",
+    "prebuild": "npm run typecheck && npm run audit",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "eslint src examples scripts",
+    "audit": "node scripts/audit-factories.mjs",
+    "security:audit": "npm audit --audit-level=moderate",
+    "test": "vitest run --coverage",
+    "check": "npm run format:check && npm run typecheck && npm run lint && npm test && npm run build"
+  },
+  "keywords": [
+    "rebac",
+    "authorization",
+    "typescript",
+    "openfga"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^26.0.1",
+    "@vitest/coverage-v8": "^4.1.9",
+    "eslint": "^10.6.0",
+    "eslint-config-prettier": "^10.1.8",
+    "prettier": "^3.8.5",
+    "tsdown": "^0.22.3",
+    "tsx": "^4.22.4",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.62.0",
+    "vitest": "^4.1.9"
+  },
+  "allowScripts": {
+    "esbuild@0.27.7": true,
+    "esbuild@0.28.0": true,
+    "fsevents@2.3.3": true
+  }
+}

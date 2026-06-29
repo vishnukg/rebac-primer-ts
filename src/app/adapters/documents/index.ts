@@ -1,0 +1,1 @@
+export * from "./makeInMemoryDocumentRepository.ts";
