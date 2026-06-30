@@ -44,12 +44,13 @@ authorization, run the implementation, and know where OpenFGA fits.
 
 ## Authentication, OpenFGA, and Production
 
-| Doc | Topic                                        | Code to inspect                                               |
-| --- | -------------------------------------------- | ------------------------------------------------------------- |
-| 01  | OAuth/OIDC and the identity handoff to ReBAC | `makeDemoTokenVerifier.ts`, `makeHttpHandler.ts`              |
-| 26  | Build-vs-OpenFGA decision and migration path | `makeGraphEvaluator.ts`, `makeOpenFgaAuthorizationService.ts` |
-| 34  | OpenFGA adapter walkthrough                  | `src/app/adapters/openfga`                                    |
-| 40  | Production readiness                         | replacement checklist                                         |
+| Doc | Topic                                           | Code to inspect                                               |
+| --- | ----------------------------------------------- | ------------------------------------------------------------- |
+| 01  | OAuth/OIDC and the identity handoff to ReBAC    | `makeDemoTokenVerifier.ts`, `makeHttpHandler.ts`              |
+| 26  | Build-vs-OpenFGA decision and migration path    | `makeGraphEvaluator.ts`, `makeOpenFgaAuthorizationService.ts` |
+| 34  | OpenFGA adapter walkthrough                     | `src/app/adapters/openfga`                                    |
+| 40  | Production readiness                            | replacement checklist                                         |
+| 41  | Request-scoped lifetimes without a DI container | `OperationContext`, `makeHttpHandler.ts`, `compose.ts`        |
 
 ## Operations
 
