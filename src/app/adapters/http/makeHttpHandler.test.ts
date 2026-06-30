@@ -16,6 +16,10 @@ import {
     seedRelationshipTuples,
 } from "../../core/fixtures/index.ts";
 import { makeHttpHandler } from "./makeHttpHandler.ts";
+import type {
+    CollaborativeDocument,
+    DocumentsService,
+} from "../../core/ports/index.ts";
 
 type TestServer = {
     baseUrl: string;
@@ -168,6 +172,55 @@ describe("makeHttpHandler", () => {
             body: "not json",
         });
         expect(unsupported.status).toBe(415);
+    });
+
+    it("threads a per-request AbortSignal into the domain call", async () => {
+        let capturedSignal: AbortSignal | undefined;
+        let abortedAtCall: boolean | undefined;
+        const document: CollaborativeDocument = {
+            id: "roadmapDocument",
+            title: "Roadmap",
+            body: "body",
+            workspace: productWorkspace,
+            updatedBy: alice,
+        };
+        const documents: DocumentsService = {
+            create: async () => document,
+            read: async (ctx) => {
+                // Snapshot at call time: the same signal aborts once the
+                // response closes, so reading .aborted after fetch would race.
+                capturedSignal = ctx.signal;
+                abortedAtCall = ctx.signal?.aborted;
+                return document;
+            },
+            update: async () => document,
+        };
+        const server = createServer(
+            makeHttpHandler({
+                authenticator: makeDemoTokenVerifier(demoTokens()),
+                documents,
+            }),
+        );
+        await new Promise<void>((resolve) => {
+            server.listen(0, "127.0.0.1", resolve);
+        });
+        const { port } = server.address() as AddressInfo;
+        servers.push({
+            baseUrl: "",
+            close: () =>
+                new Promise<void>((resolve, reject) => {
+                    server.close((err) => (err ? reject(err) : resolve()));
+                }),
+        });
+
+        const response = await fetch(
+            `http://127.0.0.1:${port}/documents/roadmapDocument`,
+            { headers: { authorization: "Bearer demo-token-alice" } },
+        );
+        expect(response.status).toBe(200);
+        expect(capturedSignal).toBeInstanceOf(AbortSignal);
+        // The signal was live (not aborted) while the request was in flight.
+        expect(abortedAtCall).toBe(false);
     });
 
     it("checks read and write scopes separately from ReBAC", async () => {

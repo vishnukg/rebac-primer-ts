@@ -54,9 +54,8 @@ const throwIfAborted = (ctx: OperationContext) => {
 ```
 
 A request-scoped value (the `AbortSignal`) is created per request and consumed
-deep in the domain, with no shared mutable state and no container. The domain
-side of this is fully built. See "What is real here vs. not" below for the one
-seam that is not yet wired.
+deep in the domain, with no shared mutable state and no container. This is wired
+end to end — see "What is real here vs. not" below for exactly where.
 
 To add another request-scoped value — say a correlation id for logging — you add
 a field to `OperationContext` and populate it at the HTTP boundary. Nothing else
@@ -127,21 +126,27 @@ tracing. Keep core domain dependencies explicit via patterns 1 and 2.
 
 Being honest about this codebase, because not every pattern belongs here:
 
-- **Pattern 1 is real and already designed in.** `OperationContext.signal` is a
-  request-scoped value, and the graph evaluator already consumes it for
-  cancellation. The _only_ missing piece is at the HTTP boundary:
-  `makeHttpHandler` currently passes an empty `{}` as the context for every call
-  (`documents.create({}, ...)`). Wiring it would mean, per request:
+- **Pattern 1 is real and wired end to end.** `OperationContext.signal` is a
+  request-scoped value, the graph evaluator consumes it for cancellation, and
+  `makeHttpHandler` now builds a per-request `AbortController` and threads its
+  signal into every document call:
 
     ```ts
+    // src/app/adapters/http/makeHttpHandler.ts (top-level handler)
     const controller = new AbortController();
-    request.on("close", () => controller.abort()); // client disconnect / timeout
+    response.on("close", () => controller.abort());
     const ctx: OperationContext = { signal: controller.signal };
-    // ...then pass ctx instead of {} into documents.create(ctx, ...), etc.
+    // ...passed into handleCreateDocument/handleGetDocument/handleUpdateDocument,
+    // which forward it as documents.create(ctx, ...), documents.read(ctx, ...), etc.
     ```
 
-    That cancels an in-flight authorization graph traversal when the client goes
-    away. The plumbing exists end to end; only the boundary is unconnected.
+    Listen on the **response**, not the request: the request stream emits
+    `"close"` as soon as its body is read, which would abort every request
+    mid-flight. The response emits `"close"` on completion (a harmless no-op
+    abort) or on a premature connection drop — the real cancellation, which
+    unwinds an in-flight authorization graph traversal when the client goes
+    away. The test `"threads a per-request AbortSignal into the domain call"` in
+    `makeHttpHandler.test.ts` locks this in.
 
 - **Pattern 2 is _not_ needed here, and adding it would be force-fitting.** The
   repositories are in-memory singletons (`makeInMemoryDocumentRepository`,

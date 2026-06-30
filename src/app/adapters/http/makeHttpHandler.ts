@@ -5,6 +5,7 @@ import type {
 } from "node:http";
 import type {
     DocumentsService,
+    OperationContext,
     TokenVerifier,
 } from "../../core/ports/index.ts";
 import {
@@ -115,6 +116,7 @@ export const makeHttpHandler = ({
     const handleCreateDocument = async (
         request: IncomingMessage,
         response: ServerResponse,
+        ctx: OperationContext,
     ) => {
         const user = await authenticate(request, authenticator);
         requireScope(user, "documents:write");
@@ -125,16 +127,13 @@ export const makeHttpHandler = ({
             "body",
             "workspaceId",
         ]);
-        const document = await documents.create(
-            {},
-            {
-                id: requiredString(body, "id"),
-                title: requiredString(body, "title"),
-                body: requiredString(body, "body"),
-                workspace: workspace(requiredString(body, "workspaceId")),
-                actor: user.subject,
-            },
-        );
+        const document = await documents.create(ctx, {
+            id: requiredString(body, "id"),
+            title: requiredString(body, "title"),
+            body: requiredString(body, "body"),
+            workspace: workspace(requiredString(body, "workspaceId")),
+            actor: user.subject,
+        });
 
         writeJSON(response, 201, { document });
     };
@@ -143,10 +142,11 @@ export const makeHttpHandler = ({
         request: IncomingMessage,
         response: ServerResponse,
         id: string,
+        ctx: OperationContext,
     ) => {
         const user = await authenticate(request, authenticator);
         requireScope(user, "documents:read");
-        const document = await documents.read({}, id, user.subject);
+        const document = await documents.read(ctx, id, user.subject);
         writeJSON(response, 200, { document });
     };
 
@@ -154,18 +154,16 @@ export const makeHttpHandler = ({
         request: IncomingMessage,
         response: ServerResponse,
         id: string,
+        ctx: OperationContext,
     ) => {
         const user = await authenticate(request, authenticator);
         requireScope(user, "documents:write");
         const body = await readJSONObject(request, ["body"]);
-        const document = await documents.update(
-            {},
-            {
-                id,
-                body: requiredString(body, "body"),
-                actor: user.subject,
-            },
-        );
+        const document = await documents.update(ctx, {
+            id,
+            body: requiredString(body, "body"),
+            actor: user.subject,
+        });
         writeJSON(response, 200, { document });
     };
 
@@ -173,6 +171,16 @@ export const makeHttpHandler = ({
         request: IncomingMessage,
         response: ServerResponse,
     ): Promise<void> => {
+        // Per-request scope: cancel in-flight work (e.g. an authorization graph
+        // traversal) if the client disconnects before the response is sent.
+        // Listen on the response, not the request: the request stream emits
+        // "close" as soon as its body is read, which would abort every request
+        // mid-flight. The response emits "close" on completion (a no-op abort)
+        // or on a premature connection drop (the real cancellation).
+        const controller = new AbortController();
+        response.on("close", () => controller.abort());
+        const ctx: OperationContext = { signal: controller.signal };
+
         try {
             const route = routeRequest(request);
             if (request.method === "GET" && route.pathname === "/health") {
@@ -184,7 +192,7 @@ export const makeHttpHandler = ({
                 return;
             }
             if (request.method === "POST" && route.pathname === "/documents") {
-                await handleCreateDocument(request, response);
+                await handleCreateDocument(request, response, ctx);
                 return;
             }
             if (
@@ -192,7 +200,7 @@ export const makeHttpHandler = ({
                 route.pathname === "/documents/:id" &&
                 route.id
             ) {
-                await handleGetDocument(request, response, route.id);
+                await handleGetDocument(request, response, route.id, ctx);
                 return;
             }
             if (
@@ -200,7 +208,7 @@ export const makeHttpHandler = ({
                 route.pathname === "/documents/:id" &&
                 route.id
             ) {
-                await handleUpdateDocument(request, response, route.id);
+                await handleUpdateDocument(request, response, route.id, ctx);
                 return;
             }
 
