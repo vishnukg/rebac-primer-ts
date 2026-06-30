@@ -10,101 +10,80 @@ FGA_CLI    := docker run --rm -v "$(CURDIR):/workspace" -w /workspace openfga/cl
 
 .DEFAULT_GOAL := help
 
-.PHONY: help install build test trace test-permission typecheck lint audit format-check security-audit check shell server server-down server-openfga \
+.PHONY: help install build test trace test-permission typecheck lint audit format-check security-audit check ci shell server server-down server-openfga \
         openfga/up openfga/down openfga/model-test openfga/seed compose/config clean
 
-help:
+help: ## Show this help
 	@printf '%s\n' 'ReBAC Primer - TypeScript implementation'
-	@printf '%s\n' ''
 	@printf '%s\n' '3 Musketeers workflow: make -> docker compose -> containerized tools'
-	@printf '%s\n' ''
-	@printf '%s\n' 'TypeScript:'
-	@printf '%s\n' '  make install        Install npm dependencies in the tools container'
-	@printf '%s\n' '  make build          Build the Node server bundle'
-	@printf '%s\n' '  make test           Run Vitest tests'
-	@printf '%s\n' '  make trace          Print the Alice can_edit graph traversal'
-	@printf '%s\n' '  make test-permission Run one representative permission test'
-	@printf '%s\n' '  make typecheck      Run tsc --noEmit'
-	@printf '%s\n' '  make lint           Run ESLint'
-	@printf '%s\n' '  make audit          Check make*/compose* factory naming'
-	@printf '%s\n' '  make format-check   Check Prettier formatting'
-	@printf '%s\n' '  make security-audit Run npm audit'
-	@printf '%s\n' '  make check          Format, typecheck, lint, tests, and build'
-	@printf '%s\n' '  make shell          Open shell in the Node tools container'
-	@printf '%s\n' '  make server         Run the app on http://127.0.0.1:4001'
-	@printf '%s\n' ''
-	@printf '%s\n' 'OpenFGA:'
-	@printf '%s\n' '  make openfga/up     Start local OpenFGA'
-	@printf '%s\n' '  make openfga/down   Stop local OpenFGA'
-	@printf '%s\n' '  make openfga/model-test Test the model with the pinned fga CLI container'
-	@printf '%s\n' '  make openfga/seed   Create store, write model, seed tuples'
-	@printf '%s\n' '  make server-openfga Run app with AUTHZ_BACKEND=openfga'
-	@printf '%s\n' ''
-	@printf '%s\n' 'Cleanup:'
-	@printf '%s\n' '  make clean          Remove containers, volumes, and build output'
+	@printf '%s\n\n' ''
+	@grep -hE '^[a-zA-Z0-9_/-]+:.*?## ' $(MAKEFILE_LIST) \
+		| awk 'BEGIN{FS=":.*?## "}{printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2}'
 
-install:
+install: ## Install npm dependencies in the tools container
 	$(NODE_TOOLS) npm install
 
-build:
+build: ## Build the Node server bundle
 	$(NODE_TOOLS) npm run build
 
-test:
+test: ## Run Vitest tests
 	$(NODE_TOOLS) npm test
 
-trace:
+trace: ## Print the Alice can_edit graph traversal
 	$(NODE_TOOLS) npm run trace
 
-test-permission:
+test-permission: ## Run one representative permission test
 	$(NODE_TOOLS) npm run test:permission
 
-typecheck:
+typecheck: ## Run tsc --noEmit
 	$(NODE_TOOLS) npm run typecheck
 
-lint:
+lint: ## Run ESLint
 	$(NODE_TOOLS) npm run lint
 
-audit:
+audit: ## Check make*/compose* factory naming
 	$(NODE_TOOLS) npm run audit
 
-format-check:
+format-check: ## Check Prettier formatting
 	$(NODE_TOOLS) npm run format:check
 
-security-audit:
+security-audit: ## Run npm audit
 	$(NODE_TOOLS) npm run security:audit
 
-check:
+check: ## Format-check, typecheck, lint, tests, and build
 	$(NODE_TOOLS) npm run check
 
-shell:
+ci: install format-check typecheck lint audit security-audit test build ## Everything CI runs, from a clean checkout
+
+shell: ## Open shell in the Node tools container
 	$(NODE_TOOLS) sh
 
-server:
+server: ## Run the app on http://127.0.0.1:4001
 	$(APP) up --build app
 
-server-down:
+server-down: ## Stop the app container
 	$(APP) down
 
-server-openfga:
+server-openfga: ## Run app with AUTHZ_BACKEND=openfga
 	@test -f deployments/openfga/.ids.env || { echo "Run 'make openfga/up && make openfga/seed' first."; exit 1; }
 	set -a; . deployments/openfga/.ids.env; set +a; \
 	AUTHZ_BACKEND=openfga OPENFGA_API_URL=http://openfga:8080 $(APP) up --build app
 
-openfga/up:
+openfga/up: ## Start local OpenFGA
 	$(COMPOSE) up -d openfga
 
-openfga/down:
+openfga/down: ## Stop local OpenFGA
 	$(COMPOSE) down
 
-openfga/model-test:
+openfga/model-test: ## Test the model with the pinned fga CLI container
 	$(FGA_CLI) model test --tests deployments/openfga/model.fga.yaml
 
-openfga/seed:
+openfga/seed: ## Create store, write model, seed tuples
 	deployments/openfga/seed.sh
 
-compose/config:
+compose/config: ## Render the merged Compose config
 	$(COMPOSE) --profile app --profile tools config
 
-clean:
+clean: ## Remove containers, volumes, and build output
 	$(COMPOSE) --profile app --profile tools down --volumes --remove-orphans
 	rm -rf dist coverage node_modules

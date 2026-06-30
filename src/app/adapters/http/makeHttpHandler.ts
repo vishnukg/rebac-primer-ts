@@ -1,4 +1,8 @@
-import type { IncomingMessage, ServerResponse } from "node:http";
+import type {
+    IncomingMessage,
+    RequestListener,
+    ServerResponse,
+} from "node:http";
 import type {
     DocumentsService,
     TokenVerifier,
@@ -92,7 +96,7 @@ const writeError = (response: ServerResponse, caught: unknown): void => {
 export const makeHttpHandler = ({
     authenticator,
     documents,
-}: MakeHttpHandlerCfg) => {
+}: MakeHttpHandlerCfg): RequestListener => {
     const handleHealth = async (
         _request: IncomingMessage,
         response: ServerResponse,
